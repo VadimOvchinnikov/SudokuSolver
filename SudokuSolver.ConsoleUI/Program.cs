@@ -155,7 +155,7 @@ namespace SudokuSolver
             foreach (SudokuBoard solution in solutions)
             {
                 Console.WriteLine("----------------");
-                Console.WriteLine($"Solution {i++.ToString()} / {solutions.Count}:");
+                Console.WriteLine($"Solution {i++} / {solutions.Count}:");
                 solution.Output();
             }
         }

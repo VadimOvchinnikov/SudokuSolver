@@ -41,9 +41,9 @@ namespace SudokuSolver
             set
             {
                 if (value > _maxValue)
-                    throw new ArgumentOutOfRangeException($"SudokuTile Value cannot be greater than {_maxValue.ToString()}. Was {value}");
+                    throw new ArgumentOutOfRangeException($"SudokuTile Value cannot be greater than {_maxValue}. Was {value}");
                 if (value < CLEARED)
-                    throw new ArgumentOutOfRangeException($"SudokuTile Value cannot be zero or smaller. Was {value}");
+                    throw new ArgumentOutOfRangeException($"SudokuTile Value cannot be smaller than zero. Was {value}");
                 _value = value;
             }
         }
