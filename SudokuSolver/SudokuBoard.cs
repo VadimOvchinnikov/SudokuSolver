@@ -37,16 +37,18 @@ namespace SudokuSolver
             }
         }
 
-        public SudokuBoard(int width, int height, int maxValue)
+        public SudokuBoard(int width, int height, int maxValue, string[] tileDefinitions)
         {
             _maxValue = maxValue;
             tiles = new SudokuTile[width, height];
             CreateTiles();
             if (_maxValue == width || _maxValue == height) // If maxValue is not width or height, then adding line rules would be stupid
                 SetupLineRules();
+
+            Populate(tileDefinitions);
         }
 
-        public SudokuBoard(int width, int height) : this(width, height, Math.Max(width, height))
+        public SudokuBoard(int width, int height, string[] tileDefinitions) : this(width, height, Math.Max(width, height), tileDefinitions)
         {
         }
 
@@ -126,23 +128,27 @@ namespace SudokuSolver
             yield break;
         }
 
-        private int _rowAddIndex;
-
-        public void AddRow(string s)
+        private void Populate(string[] tileDefinitions)
         {
-            // Method for initializing a board from string
-            for (int i = 0; i < s.Length; i++)
+            int rowIndex = 0;
+
+            foreach (string s in tileDefinitions)
             {
-                SudokuTile tile = tiles[i, _rowAddIndex];
-                if (s[i] == '/')
+                // Method for initializing a board from string
+                for (int i = 0; i < s.Length; i++)
                 {
-                    tile.Block();
-                    continue;
+                    SudokuTile tile = tiles[i, rowIndex];
+                    if (s[i] == '/')
+                    {
+                        tile.Block();
+                        continue;
+                    }
+                    int value = s[i] == '.' ? SudokuTile.CLEARED : (int)char.GetNumericValue(s[i]);
+                    tile.Value = value;
                 }
-                int value = s[i] == '.' ? SudokuTile.CLEARED : (int)char.GetNumericValue(s[i]);
-                tile.Value = value;
+
+                rowIndex++;
             }
-            _rowAddIndex++;
         }
 
         internal SudokuProgress Simplify()

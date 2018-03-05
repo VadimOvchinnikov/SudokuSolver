@@ -19,9 +19,9 @@ namespace SudokuSolver
                 select new Point(x, y);
         }
 
-        public static SudokuBoard Samurai()
+        public static SudokuBoard Samurai(string[] tileDefinitions)
         {
-            SudokuBoard board = new SudokuBoard(SamuraiAreas * BoxSize, SamuraiAreas * BoxSize, DefaultSize);
+            SudokuBoard board = new SudokuBoard(SamuraiAreas * BoxSize, SamuraiAreas * BoxSize, DefaultSize, tileDefinitions);
             // Removed the empty areas where there are no tiles
             IEnumerable<SudokuTile> tiles = new[]
             {
@@ -62,18 +62,18 @@ namespace SudokuSolver
             return board;
         }
 
-        public static SudokuBoard SizeAndBoxes(int width, int height, int boxCountX, int boxCountY)
+        public static SudokuBoard SizeAndBoxes(int width, int height, int boxCountX, int boxCountY, string[] tileDefinitions)
         {
-            SudokuBoard board = new SudokuBoard(width, height);
+            SudokuBoard board = new SudokuBoard(width, height, tileDefinitions);
             board.AddBoxesCount(boxCountX, boxCountY);
             return board;
         }
 
-        public static SudokuBoard ClassicWith3x3Boxes() => SizeAndBoxes(DefaultSize, DefaultSize, DefaultSize / BoxSize, DefaultSize / BoxSize);
+        public static SudokuBoard ClassicWith3x3Boxes(string[] tileDefinitions) => SizeAndBoxes(DefaultSize, DefaultSize, DefaultSize / BoxSize, DefaultSize / BoxSize, tileDefinitions);
 
-        public static SudokuBoard ClassicWith3x3BoxesAndHyperRegions()
+        public static SudokuBoard ClassicWith3x3BoxesAndHyperRegions(string[] tileDefinitions)
         {
-            SudokuBoard board = ClassicWith3x3Boxes();
+            SudokuBoard board = ClassicWith3x3Boxes(tileDefinitions);
             const int HyperSecond = HyperMargin + BoxSize + HyperMargin;
             // Create the four extra hyper regions
             board.CreateRule("HyperA", Box(3, 3).Select(pos => board[pos.X + HyperMargin, pos.Y + HyperMargin]));
@@ -83,11 +83,11 @@ namespace SudokuSolver
             return board;
         }
 
-        public static SudokuBoard ClassicWithSpecialBoxes(string[] areas)
+        public static SudokuBoard ClassicWithSpecialBoxes(string[] areas, string[] tileDefinitions)
         {
             int sizeX = areas[0].Length;
             int sizeY = areas.Length;
-            SudokuBoard board = new SudokuBoard(sizeX, sizeY);
+            SudokuBoard board = new SudokuBoard(sizeX, sizeY, tileDefinitions);
             string joinedString = string.Join("", areas);
             IEnumerable<char> grouped = joinedString.Distinct();
 
