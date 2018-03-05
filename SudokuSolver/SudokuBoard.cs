@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace SudokuSolver
@@ -16,7 +17,7 @@ namespace SudokuSolver
             tiles = new SudokuTile[copy.Width, copy.Height];
             CreateTiles();
             // Copy the tile values
-            foreach (var pos in SudokuFactory.Box(Width, Height))
+            foreach (Point pos in SudokuFactory.Box(Width, Height))
             {
                 tiles[pos.X, pos.Y] = new SudokuTile(pos.X, pos.Y, _maxValue)
                 {
@@ -27,7 +28,7 @@ namespace SudokuSolver
             // Copy the rules
             foreach (SudokuRule rule in copy.rules)
             {
-                var ruleTiles = new HashSet<SudokuTile>();
+                HashSet<SudokuTile> ruleTiles = new HashSet<SudokuTile>();
                 foreach (SudokuTile tile in rule)
                 {
                     ruleTiles.Add(tiles[tile.X, tile.Y]);
@@ -51,7 +52,7 @@ namespace SudokuSolver
 
         private void CreateTiles()
         {
-            foreach (var pos in SudokuFactory.Box(tiles.GetLength(0), tiles.GetLength(1)))
+            foreach (Point pos in SudokuFactory.Box(tiles.GetLength(0), tiles.GetLength(1)))
             {
                 tiles[pos.X, pos.Y] = new SudokuTile(pos.X, pos.Y, _maxValue);
             }
@@ -96,7 +97,7 @@ namespace SudokuSolver
                 yield break;
 
             // Find one of the values with the least number of alternatives, but that still has at least 2 alternatives
-            var query = from rule in rules
+            IEnumerable<SudokuTile> query = from rule in rules
                         from tile in rule
                         where tile.PossibleCount > 1
                         orderby tile.PossibleCount ascending
@@ -112,12 +113,12 @@ namespace SudokuSolver
 
             Console.WriteLine($"SudokuTile: {chosen}");
 
-            foreach (var value in Enumerable.Range(1, _maxValue))
+            foreach (int value in Enumerable.Range(1, _maxValue))
             {
                 // Iterate through all the valid possibles on the chosen square and pick a number for it
                 if (!chosen.IsValuePossible(value))
                     continue;
-                var copy = new SudokuBoard(this);
+                SudokuBoard copy = new SudokuBoard(this);
                 copy[chosen.X, chosen.Y].Fix(value, "Trial and error");
                 foreach (SudokuBoard innerSolution in copy.Solve())
                     yield return innerSolution;
@@ -182,8 +183,8 @@ namespace SudokuSolver
             int sizeX = Width / boxesX;
             int sizeY = Height / boxesY;
 
-            var boxes = SudokuFactory.Box(sizeX, sizeY);
-            foreach (var pos in boxes)
+            IEnumerable<Point> boxes = SudokuFactory.Box(sizeX, sizeY);
+            foreach (Point pos in boxes)
             {
                 IEnumerable<SudokuTile> boxTiles = TileBox(pos.X * sizeX, pos.Y * sizeY, sizeX, sizeY);
                 CreateRule($"Box at ({pos.X}, {pos.Y})", boxTiles);
@@ -192,7 +193,7 @@ namespace SudokuSolver
 
         public void OutputRules()
         {
-            foreach (var rule in rules)
+            foreach (SudokuRule rule in rules)
             {
                 Console.WriteLine($"{String.Join(",", rule)} - {rule}");
             }

@@ -23,29 +23,29 @@ namespace SudokuSolver
         {
             SudokuBoard board = new SudokuBoard(SamuraiAreas * BoxSize, SamuraiAreas * BoxSize, DefaultSize);
             // Removed the empty areas where there are no tiles
-            var queriesForBlocked = new List<IEnumerable<SudokuTile>>
+            List<IEnumerable<SudokuTile>> queriesForBlocked = new List<IEnumerable<SudokuTile>>
             {
                 from pos in Box(BoxSize, BoxSize * 2) select board[pos.X + DefaultSize, pos.Y],
                 from pos in Box(BoxSize, BoxSize * 2) select board[pos.X + DefaultSize, pos.Y + DefaultSize * 2 - BoxSize],
                 from pos in Box(BoxSize * 2, BoxSize) select board[pos.X, pos.Y + DefaultSize],
                 from pos in Box(BoxSize * 2, BoxSize) select board[pos.X + DefaultSize * 2 - BoxSize, pos.Y + DefaultSize]
             };
-            foreach (var query in queriesForBlocked)
+            foreach (IEnumerable<SudokuTile> query in queriesForBlocked)
             {
-                foreach (var tile in query) tile.Block();
+                foreach (SudokuTile tile in query) tile.Block();
             }
 
             // Select the tiles in the 3 x 3 area (area.X, area.Y) and create rules for them
-            foreach (var area in Box(SamuraiAreas, SamuraiAreas))
+            foreach (Point area in Box(SamuraiAreas, SamuraiAreas))
             {
-                var tilesInArea = from pos in Box(BoxSize, BoxSize) select board[area.X * BoxSize + pos.X, area.Y * BoxSize + pos.Y];
+                IEnumerable<SudokuTile> tilesInArea = from pos in Box(BoxSize, BoxSize) select board[area.X * BoxSize + pos.X, area.Y * BoxSize + pos.Y];
                 if (tilesInArea.First().IsBlocked)
                     continue;
                 board.CreateRule($"Area {area.X}, {area.Y}", tilesInArea);
             }
 
             // Select all rows and create columns for them
-            foreach (var posSet in Enumerable.Range(0, board.Width))
+            foreach (int posSet in Enumerable.Range(0, board.Width))
             {
                 board.CreateRule($"Column Upper {posSet}", from pos in Box(1, DefaultSize) select board[posSet, pos.Y]);
                 board.CreateRule($"Column Lower {posSet}", from pos in Box(1, DefaultSize) select board[posSet, pos.Y + DefaultSize + BoxSize]);
@@ -89,14 +89,14 @@ namespace SudokuSolver
             int sizeX = areas[0].Length;
             int sizeY = areas.Length;
             SudokuBoard board = new SudokuBoard(sizeX, sizeY);
-            var joinedString = string.Join("", areas);
-            var grouped = joinedString.Distinct();
+            string joinedString = string.Join("", areas);
+            IEnumerable<char> grouped = joinedString.Distinct();
 
             // Loop through all the unique characters
-            foreach (var ch in grouped)
+            foreach (char ch in grouped)
             {
                 // Select the rule tiles based on the index of the character
-                var ruleTiles = from i in Enumerable.Range(0, joinedString.Length)
+                IEnumerable<SudokuTile> ruleTiles = from i in Enumerable.Range(0, joinedString.Length)
                                 where joinedString[i] == ch // filter out any non-matching characters
                                 select board[i % sizeX, i / sizeY];
                 board.CreateRule($"Area {ch}", ruleTiles);

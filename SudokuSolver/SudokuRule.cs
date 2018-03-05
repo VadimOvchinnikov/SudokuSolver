@@ -17,8 +17,8 @@ namespace SudokuSolver
 
         public bool CheckValid()
         {
-            var filtered = _tiles.Where(tile => tile.HasValue);
-            var groupedByValue = filtered.GroupBy(tile => tile.Value);
+            IEnumerable<SudokuTile> filtered = _tiles.Where(tile => tile.HasValue);
+            IEnumerable<IGrouping<int, SudokuTile>> groupedByValue = filtered.GroupBy(tile => tile.Value);
             return groupedByValue.All(group => group.Count() == 1);
         }
 
@@ -50,7 +50,7 @@ namespace SudokuSolver
             {
                 if (existingNumbers.Contains(value)) // this rule already has the value, skip checking for it
                     continue;
-                var possibles = _tiles.Where(tile => !tile.HasValue && tile.IsValuePossible(value)).ToList();
+                List<SudokuTile> possibles = _tiles.Where(tile => !tile.HasValue && tile.IsValuePossible(value)).ToList();
                 if (possibles.Count == 0)
                     return SudokuProgress.FAILED;
                 if (possibles.Count == 1)
