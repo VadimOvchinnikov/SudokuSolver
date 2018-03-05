@@ -88,7 +88,10 @@ namespace SudokuSolver
 
         public IEnumerable<SudokuBoard> Solve()
         {
-            ResetSolutions();
+            // reset solution
+            foreach (SudokuTile tile in tiles)
+                tile.ResetPossibles();
+
             SudokuProgress simplify = SudokuProgress.PROGRESS;
             while (simplify == SudokuProgress.PROGRESS) simplify = Simplify();
 
@@ -158,23 +161,14 @@ namespace SudokuSolver
             _rowAddIndex++;
         }
 
-        internal void ResetSolutions()
-        {
-            foreach (SudokuTile tile in tiles)
-                tile.ResetPossibles();
-        }
-
         internal SudokuProgress Simplify()
         {
-            SudokuProgress result = SudokuProgress.NO_PROGRESS;
             bool valid = CheckValid();
             if (!valid)
                 return SudokuProgress.FAILED;
 
-            foreach (SudokuRule rule in rules)
-                result = SudokuTile.CombineSolvedState(result, rule.Solve());
-
-            return result;
+            return rules.Aggregate(SudokuProgress.NO_PROGRESS,
+                (progress, rule) => SudokuTile.CombineSolvedState(progress, rule.Solve()));
         }
 
         internal void AddBoxesCount(int boxesX, int boxesY)
