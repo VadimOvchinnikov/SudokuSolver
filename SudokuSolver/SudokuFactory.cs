@@ -25,10 +25,10 @@ namespace SudokuSolver
             // Removed the empty areas where there are no tiles
             var queriesForBlocked = new List<IEnumerable<SudokuTile>>
             {
-                from pos in Box(BoxSize, BoxSize * 2) select board.Tile(pos.X + DefaultSize, pos.Y),
-                from pos in Box(BoxSize, BoxSize * 2) select board.Tile(pos.X + DefaultSize, pos.Y + DefaultSize * 2 - BoxSize),
-                from pos in Box(BoxSize * 2, BoxSize) select board.Tile(pos.X, pos.Y + DefaultSize),
-                from pos in Box(BoxSize * 2, BoxSize) select board.Tile(pos.X + DefaultSize * 2 - BoxSize, pos.Y + DefaultSize)
+                from pos in Box(BoxSize, BoxSize * 2) select board[pos.X + DefaultSize, pos.Y],
+                from pos in Box(BoxSize, BoxSize * 2) select board[pos.X + DefaultSize, pos.Y + DefaultSize * 2 - BoxSize],
+                from pos in Box(BoxSize * 2, BoxSize) select board[pos.X, pos.Y + DefaultSize],
+                from pos in Box(BoxSize * 2, BoxSize) select board[pos.X + DefaultSize * 2 - BoxSize, pos.Y + DefaultSize]
             };
             foreach (var query in queriesForBlocked)
             {
@@ -38,7 +38,7 @@ namespace SudokuSolver
             // Select the tiles in the 3 x 3 area (area.X, area.Y) and create rules for them
             foreach (var area in Box(SamuraiAreas, SamuraiAreas))
             {
-                var tilesInArea = from pos in Box(BoxSize, BoxSize) select board.Tile(area.X * BoxSize + pos.X, area.Y * BoxSize + pos.Y);
+                var tilesInArea = from pos in Box(BoxSize, BoxSize) select board[area.X * BoxSize + pos.X, area.Y * BoxSize + pos.Y];
                 if (tilesInArea.First().IsBlocked)
                     continue;
                 board.CreateRule($"Area {area.X}, {area.Y}", tilesInArea);
@@ -47,17 +47,17 @@ namespace SudokuSolver
             // Select all rows and create columns for them
             foreach (var posSet in Enumerable.Range(0, board.Width))
             {
-                board.CreateRule($"Column Upper {posSet}", from pos in Box(1, DefaultSize) select board.Tile(posSet, pos.Y));
-                board.CreateRule($"Column Lower {posSet}", from pos in Box(1, DefaultSize) select board.Tile(posSet, pos.Y + DefaultSize + BoxSize));
+                board.CreateRule($"Column Upper {posSet}", from pos in Box(1, DefaultSize) select board[posSet, pos.Y]);
+                board.CreateRule($"Column Lower {posSet}", from pos in Box(1, DefaultSize) select board[posSet, pos.Y + DefaultSize + BoxSize]);
 
-                board.CreateRule($"Row Left {posSet}", from pos in Box(DefaultSize, 1) select board.Tile(pos.X, posSet));
-                board.CreateRule($"Row Right {posSet}", from pos in Box(DefaultSize, 1) select board.Tile(pos.X + DefaultSize + BoxSize, posSet));
+                board.CreateRule($"Row Left {posSet}", from pos in Box(DefaultSize, 1) select board[pos.X, posSet]);
+                board.CreateRule($"Row Right {posSet}", from pos in Box(DefaultSize, 1) select board[pos.X + DefaultSize + BoxSize, posSet]);
 
                 if (posSet >= BoxSize * 2 && posSet < BoxSize * 2 + DefaultSize)
                 {
                     // Create rules for the middle sudoku
-                    board.CreateRule($"Column Middle {posSet}", from pos in Box(1, 9) select board.Tile(posSet, pos.Y + BoxSize * 2));
-                    board.CreateRule($"Row Middle {posSet}", from pos in Box(9, 1) select board.Tile(pos.X + BoxSize * 2, posSet));
+                    board.CreateRule($"Column Middle {posSet}", from pos in Box(1, 9) select board[posSet, pos.Y + BoxSize * 2]);
+                    board.CreateRule($"Row Middle {posSet}", from pos in Box(9, 1) select board[pos.X + BoxSize * 2, posSet]);
                 }
             }
             return board;
@@ -77,10 +77,10 @@ namespace SudokuSolver
             SudokuBoard board = ClassicWith3x3Boxes();
             const int HyperSecond = HyperMargin + BoxSize + HyperMargin;
             // Create the four extra hyper regions
-            board.CreateRule("HyperA", from pos in Box(3, 3) select board.Tile(pos.X + HyperMargin, pos.Y + HyperMargin));
-            board.CreateRule("HyperB", from pos in Box(3, 3) select board.Tile(pos.X + HyperSecond, pos.Y + HyperMargin));
-            board.CreateRule("HyperC", from pos in Box(3, 3) select board.Tile(pos.X + HyperMargin, pos.Y + HyperSecond));
-            board.CreateRule("HyperD", from pos in Box(3, 3) select board.Tile(pos.X + HyperSecond, pos.Y + HyperSecond));
+            board.CreateRule("HyperA", from pos in Box(3, 3) select board[pos.X + HyperMargin, pos.Y + HyperMargin]);
+            board.CreateRule("HyperB", from pos in Box(3, 3) select board[pos.X + HyperSecond, pos.Y + HyperMargin]);
+            board.CreateRule("HyperC", from pos in Box(3, 3) select board[pos.X + HyperMargin, pos.Y + HyperSecond]);
+            board.CreateRule("HyperD", from pos in Box(3, 3) select board[pos.X + HyperSecond, pos.Y + HyperSecond]);
             return board;
         }
 
@@ -98,7 +98,7 @@ namespace SudokuSolver
                 // Select the rule tiles based on the index of the character
                 var ruleTiles = from i in Enumerable.Range(0, joinedString.Length)
                                 where joinedString[i] == ch // filter out any non-matching characters
-                                select board.Tile(i % sizeX, i / sizeY);
+                                select board[i % sizeX, i / sizeY];
                 board.CreateRule($"Area {ch}", ruleTiles);
             }
 

@@ -118,8 +118,8 @@ namespace SudokuSolver
                 if (!chosen.IsValuePossible(value))
                     continue;
                 var copy = new SudokuBoard(this);
-                copy.Tile(chosen.X, chosen.Y).Fix(value, "Trial and error");
-                foreach (var innerSolution in copy.Solve())
+                copy[chosen.X, chosen.Y].Fix(value, "Trial and error");
+                foreach (SudokuBoard innerSolution in copy.Solve())
                     yield return innerSolution;
             }
             yield break;
@@ -137,7 +137,7 @@ namespace SudokuSolver
             }
         }
 
-        public SudokuTile Tile(int x, int y) => tiles[x, y];
+        public SudokuTile this[int x, int y] => tiles[x, y];
 
         private int _rowAddIndex;
 
