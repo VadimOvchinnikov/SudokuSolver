@@ -71,7 +71,6 @@ namespace SudokuSolver
 
         internal void Fix(int value, string reason)
         {
-            Console.WriteLine($"Fixing {value} on pos {_x}, {_y}: {reason}");
             Value = value;
             ResetPossibles();
         }

@@ -142,19 +142,27 @@ namespace SudokuSolver
         private static void CompleteSolve(SudokuBoard board)
         {
             Console.WriteLine("Board:");
-            board.Output();
+            Output(board);
             List<SudokuBoard> solutions = board.Solve().ToList();
-            Console.WriteLine("Base Board Progress:");
-            board.Output();
-            Console.WriteLine("--");
-            Console.WriteLine("--");
             Console.WriteLine($"All {solutions.Count} solutions:");
             int i = 1;
             foreach (SudokuBoard solution in solutions)
             {
                 Console.WriteLine("----------------");
                 Console.WriteLine($"Solution {i++} / {solutions.Count}:");
-                solution.Output();
+                Output(solution);
+            }
+        }
+
+        private static void Output(SudokuBoard board)
+        {
+            for (int y = 0; y < board.Height; y++)
+            {
+                for (int x = 0; x < board.Width; x++)
+                {
+                    Console.Write(board[x, y].ToStringSimple());
+                }
+                Console.WriteLine();
             }
         }
     }

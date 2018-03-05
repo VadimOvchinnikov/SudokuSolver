@@ -115,8 +115,6 @@ namespace SudokuSolver
                 yield break;
             }
 
-            Console.WriteLine($"SudokuTile: {chosen}");
-
             foreach (int value in Enumerable.Range(1, _maxValue))
             {
                 // Iterate through all the valid possibles on the chosen square and pick a number for it
@@ -128,18 +126,6 @@ namespace SudokuSolver
                     yield return innerSolution;
             }
             yield break;
-        }
-
-        public void Output()
-        {
-            for (int y = 0; y < tiles.GetLength(1); y++)
-            {
-                for (int x = 0; x < tiles.GetLength(0); x++)
-                {
-                    Console.Write(tiles[x, y].ToStringSimple());
-                }
-                Console.WriteLine();
-            }
         }
 
         private int _rowAddIndex;
