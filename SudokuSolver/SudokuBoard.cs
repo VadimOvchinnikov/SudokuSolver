@@ -60,34 +60,18 @@ namespace SudokuSolver
             // Create rules for rows and columns
             for (int x = 0; x < Width; x++)
             {
-                IEnumerable<SudokuTile> row = GetCol(x);
+                IEnumerable<SudokuTile> row = Enumerable.Range(0, tiles.GetLength(1)).Select(i => tiles[i, x]);
                 rules.Add(new SudokuRule(row, $"Row {x}"));
             }
             for (int y = 0; y < Height; y++)
             {
-                IEnumerable<SudokuTile> col = GetRow(y);
+                IEnumerable<SudokuTile> col = Enumerable.Range(0, tiles.GetLength(0)).Select(i => tiles[y, i]);
                 rules.Add(new SudokuRule(col, $"Col {y}"));
             }
         }
 
         internal IEnumerable<SudokuTile> TileBox(int startX, int startY, int sizeX, int sizeY) =>
             from pos in SudokuFactory.Box(sizeX, sizeY) select tiles[startX + pos.X, startY + pos.Y];
-
-        private IEnumerable<SudokuTile> GetRow(int row)
-        {
-            for (int i = 0; i < tiles.GetLength(0); i++)
-            {
-                yield return tiles[i, row];
-            }
-        }
-
-        private IEnumerable<SudokuTile> GetCol(int col)
-        {
-            for (int i = 0; i < tiles.GetLength(1); i++)
-            {
-                yield return tiles[col, i];
-            }
-        }
 
         private ISet<SudokuRule> rules = new HashSet<SudokuRule>();
         private SudokuTile[,] tiles;
