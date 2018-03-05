@@ -141,8 +141,6 @@ namespace SudokuSolver
 
         private static void CompleteSolve(SudokuBoard board)
         {
-            Console.WriteLine("Rules:");
-            board.OutputRules();
             Console.WriteLine("Board:");
             board.Output();
             List<SudokuBoard> solutions = board.Solve().ToList();

@@ -76,6 +76,8 @@ namespace SudokuSolver
         internal IEnumerable<SudokuTile> TileBox(int startX, int startY, int sizeX, int sizeY) =>
             SudokuFactory.Box(sizeX, sizeY).Select(pos => tiles[startX + pos.X, startY + pos.Y]);
 
+        public SudokuTile this[int x, int y] => tiles[x, y];
+
         public int Width => tiles.GetLength(0);
 
         public int Height => tiles.GetLength(1);
@@ -100,10 +102,10 @@ namespace SudokuSolver
 
             // Find one of the values with the least number of alternatives, but that still has at least 2 alternatives
             IEnumerable<SudokuTile> query = from rule in rules
-                        from tile in rule
-                        where tile.PossibleCount > 1
-                        orderby tile.PossibleCount ascending
-                        select tile;
+                                            from tile in rule
+                                            where tile.PossibleCount > 1
+                                            orderby tile.PossibleCount ascending
+                                            select tile;
 
             SudokuTile chosen = query.FirstOrDefault();
             if (chosen == null)
@@ -139,8 +141,6 @@ namespace SudokuSolver
                 Console.WriteLine();
             }
         }
-
-        public SudokuTile this[int x, int y] => tiles[x, y];
 
         private int _rowAddIndex;
 
@@ -181,14 +181,6 @@ namespace SudokuSolver
             {
                 IEnumerable<SudokuTile> boxTiles = TileBox(pos.X * sizeX, pos.Y * sizeY, sizeX, sizeY);
                 CreateRule($"Box at ({pos.X}, {pos.Y})", boxTiles);
-            }
-        }
-
-        public void OutputRules()
-        {
-            foreach (SudokuRule rule in rules)
-            {
-                Console.WriteLine($"{String.Join(",", rule)} - {rule}");
             }
         }
 
