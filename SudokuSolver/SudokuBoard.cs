@@ -20,7 +20,7 @@ namespace SudokuSolver
             {
                 tiles[pos.X, pos.Y] = new SudokuTile(pos.X, pos.Y, _maxValue)
                 {
-                    Value = copy.tiles[pos.X, pos.Y].Value
+                    Value = copy[pos.X, pos.Y].Value
                 };
             }
 
