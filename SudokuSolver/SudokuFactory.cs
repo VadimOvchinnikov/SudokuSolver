@@ -23,22 +23,21 @@ namespace SudokuSolver
         {
             SudokuBoard board = new SudokuBoard(SamuraiAreas * BoxSize, SamuraiAreas * BoxSize, DefaultSize);
             // Removed the empty areas where there are no tiles
-            List<IEnumerable<SudokuTile>> queriesForBlocked = new List<IEnumerable<SudokuTile>>
+            IEnumerable<SudokuTile> tiles = new[]
             {
                 Box(BoxSize, BoxSize * 2).Select(pos => board[pos.X + DefaultSize, pos.Y]),
                 Box(BoxSize, BoxSize * 2).Select(pos => board[pos.X + DefaultSize, pos.Y + DefaultSize * 2 - BoxSize]),
                 Box(BoxSize * 2, BoxSize).Select(pos => board[pos.X, pos.Y + DefaultSize]),
                 Box(BoxSize * 2, BoxSize).Select(pos => board[pos.X + DefaultSize * 2 - BoxSize, pos.Y + DefaultSize])
-            };
-            foreach (IEnumerable<SudokuTile> query in queriesForBlocked)
-            {
-                foreach (SudokuTile tile in query) tile.Block();
-            }
+            }.SelectMany(t => t);
+
+            foreach (SudokuTile tile in tiles) tile.Block();
 
             // Select the tiles in the 3 x 3 area (area.X, area.Y) and create rules for them
             foreach (Point area in Box(SamuraiAreas, SamuraiAreas))
             {
-                IEnumerable<SudokuTile> tilesInArea = Box(BoxSize, BoxSize).Select(pos => board[area.X * BoxSize + pos.X, area.Y * BoxSize + pos.Y]);
+                IEnumerable<SudokuTile> tilesInArea = Box(BoxSize, BoxSize)
+                    .Select(pos => board[area.X * BoxSize + pos.X, area.Y * BoxSize + pos.Y]);
                 if (tilesInArea.First().IsBlocked)
                     continue;
                 board.CreateRule($"Area {area.X}, {area.Y}", tilesInArea);
