@@ -22,8 +22,6 @@ namespace SudokuSolver
             return groupedByValue.All(group => group.Count() == 1);
         }
 
-        public bool CheckComplete() => _tiles.All(tile => tile.HasValue) && CheckValid();
-
         internal SudokuProgress RemovePossibles()
         {
             // Tiles that has a number already

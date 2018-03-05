@@ -6,7 +6,7 @@ namespace SudokuSolver
 {
     public class SudokuTile : IEquatable<SudokuTile>
     {
-        public const int CLEARED = 0;
+        internal const int CLEARED = 0;
         private readonly int _maxValue;
         private readonly int _x;
         private readonly int _y;
@@ -41,7 +41,7 @@ namespace SudokuSolver
         public int Value
         {
             get => _value;
-            set
+            internal set
             {
                 if (value > _maxValue)
                     throw new ArgumentOutOfRangeException($"SudokuTile Value cannot be greater than {_maxValue}. Was {value}");
@@ -67,7 +67,7 @@ namespace SudokuSolver
             }
         }
 
-        public void Block() => _blocked = true;
+        internal void Block() => _blocked = true;
 
         internal void Fix(int value, string reason)
         {
@@ -92,7 +92,7 @@ namespace SudokuSolver
             return result;
         }
 
-        public bool IsValuePossible(int i) => possibleValues.Contains(i);
+        internal bool IsValuePossible(int i) => possibleValues.Contains(i);
 
         public bool Equals(SudokuTile other)
         {
@@ -117,6 +117,6 @@ namespace SudokuSolver
         public int Y => _y;
         public bool IsBlocked => _blocked;  // A blocked field can not contain a value — used for creating 'holes' in the map
 
-        public int PossibleCount => IsBlocked ? 1 : possibleValues.Count;
+        internal int PossibleCount => IsBlocked ? 1 : possibleValues.Count;
     }
 }

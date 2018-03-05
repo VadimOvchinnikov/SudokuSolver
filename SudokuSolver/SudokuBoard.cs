@@ -82,9 +82,7 @@ namespace SudokuSolver
 
         public int Height => tiles.GetLength(1);
 
-        public void CreateRule(string description, params SudokuTile[] tiles) => rules.Add(new SudokuRule(tiles, description));
-
-        public void CreateRule(string description, IEnumerable<SudokuTile> tiles) => rules.Add(new SudokuRule(tiles, description));
+        internal void CreateRule(string description, IEnumerable<SudokuTile> tiles) => rules.Add(new SudokuRule(tiles, description));
 
         public bool CheckValid() => rules.All(rule => rule.CheckValid());
 
