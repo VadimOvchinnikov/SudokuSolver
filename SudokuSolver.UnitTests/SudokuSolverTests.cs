@@ -42,7 +42,7 @@ namespace SudokuSolver.UnitTests
                 "3...84..."
             });
 
-            SudokuBoard solution = SudokuFactory.ClassicWith3x3Boxes(new[]
+            string[] tileDefinitions = new[]
             {
                 "632845179",
                 "471369285",
@@ -53,14 +53,14 @@ namespace SudokuSolver.UnitTests
                 "524916837",
                 "986237514",
                 "317584926",
-            });
+            };
 
             // Act
             IEnumerable<SudokuBoard> solutions = board.Solve();
 
             // Assert
             Assert.Single(solutions);
-            Assert.Equal(solutions.First(), solution);
+            Assert.Equal(tileDefinitions, solutions.First().TileDefinitions);
         }
 
         [Fact]
@@ -99,20 +99,20 @@ namespace SudokuSolver.UnitTests
                 "4000"
             });
 
-            SudokuBoard solution = SudokuFactory.SizeAndBoxes(4, 4, 2, 2, new[]
+            string[] tileDefinitions = new[]
             {
                 "2413",
                 "3124",
                 "1342",
                 "4231"
-            });
+            };
 
             // Act
             IEnumerable<SudokuBoard> solutions = board.Solve();
 
             // Assert
             Assert.Single(solutions);
-            Assert.Equal(solutions.First(), solution);
+            Assert.Equal(tileDefinitions, solutions.Single().TileDefinitions);
         }
 
         [Fact]
@@ -133,7 +133,7 @@ namespace SudokuSolver.UnitTests
                 "69......."
             });
 
-            SudokuBoard solution = SudokuFactory.ClassicWith3x3BoxesAndHyperRegions(new[]
+            string[] tileDefinitions = new[]
             {
                 "946832715",
                 "152697834",
@@ -144,14 +144,14 @@ namespace SudokuSolver.UnitTests
                 "327985461",
                 "584163927",
                 "691274358"
-            });
+            };
 
             // Act
             IEnumerable<SudokuBoard> solutions = board.Solve();
 
             // Assert
             Assert.Single(solutions);
-            Assert.Equal(solutions.First(), solution);
+            Assert.Equal(tileDefinitions, solutions.First().TileDefinitions);
         }
 
         [Fact]
@@ -184,7 +184,7 @@ namespace SudokuSolver.UnitTests
                 "5.......7"
             });
 
-            SudokuBoard solution = SudokuFactory.ClassicWith3x3BoxesAndHyperRegions(new[]
+            string[] tileDefinitions = new[]
             {
                 "358196274",
                 "492567138",
@@ -195,14 +195,14 @@ namespace SudokuSolver.UnitTests
                 "987324561",
                 "734615982",
                 "561289347"
-            });
+            };
 
             // Act
             IEnumerable<SudokuBoard> solutions = board.Solve();
 
             // Assert
             Assert.Single(solutions);
-            Assert.Equal(solutions.First(), solution);
+            Assert.Equal(tileDefinitions, solutions.First().TileDefinitions);
         }
 
         [Fact]
@@ -235,7 +235,7 @@ namespace SudokuSolver.UnitTests
                 ".7.6...84///8...7..5."
             });
 
-            SudokuBoard solution = SudokuFactory.Samurai(new[]
+            string[] tileDefinitions = new[]
             {
                 "674825931000142673859",
                 "513794862000897425361",
@@ -258,14 +258,14 @@ namespace SudokuSolver.UnitTests
                 "694385127000431586972",
                 "581742693000257914638",
                 "372619584000896273154"
-            });
+            };
 
             // Act
             IEnumerable<SudokuBoard> solutions = board.Solve();
 
             // Assert
             Assert.Single(solutions);
-            Assert.Equal(solutions.First(), solution);
+            Assert.Equal(tileDefinitions, solutions.First().TileDefinitions);
         }
     }
 }
