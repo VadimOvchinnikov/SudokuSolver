@@ -90,6 +90,8 @@ namespace SudokuSolver
 
         public string[] TileDefinitions => tiles
             .Cast<SudokuTile>()
+            .OrderBy(t => t.X)
+            .ThenBy(t => t.Y)
             .GroupBy(t => t.X)
             .Select(g => string.Join(string.Empty, g.Select(t => t.Value)))
             .ToArray();

@@ -24,6 +24,8 @@ namespace SudokuSolver.WindowsForms
         {
             var groupedByRow = NumericUpDownControls
                 .Select(n => TilesTableLayoutPanel.GetCellPosition(n))
+                .OrderBy(p => p.Row)
+                .ThenBy(p => p.Column)
                 .GroupBy(p => p.Row);
 
             string[] tileDefinitions = groupedByRow.Select(g => new string(
