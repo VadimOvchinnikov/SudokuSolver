@@ -65,12 +65,12 @@ namespace SudokuSolver
             // Create rules for rows and columns
             for (int x = 0; x < Width; x++)
             {
-                IEnumerable<SudokuTile> row = Enumerable.Range(0, tiles.GetLength(1)).Select(i => tiles[i, x]);
+                IEnumerable<SudokuTile> row = Enumerable.Range(0, tiles.GetLength(1)).Select(i => tiles[x, i]);
                 rules.Add(new SudokuRule(row, $"Row {x}"));
             }
             for (int y = 0; y < Height; y++)
             {
-                IEnumerable<SudokuTile> col = Enumerable.Range(0, tiles.GetLength(0)).Select(i => tiles[y, i]);
+                IEnumerable<SudokuTile> col = Enumerable.Range(0, tiles.GetLength(0)).Select(i => tiles[i, y]);
                 rules.Add(new SudokuRule(col, $"Col {y}"));
             }
         }
@@ -92,7 +92,7 @@ namespace SudokuSolver
             .Cast<SudokuTile>()
             .OrderBy(t => t.X)
             .ThenBy(t => t.Y)
-            .GroupBy(t => t.X)
+            .GroupBy(t => t.Y)
             .Select(g => string.Join(string.Empty, g.Select(t => t.Value)))
             .ToArray();
 
