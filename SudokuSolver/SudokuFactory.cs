@@ -96,8 +96,8 @@ namespace SudokuSolver
             {
                 // Select the rule tiles based on the index of the character
                 IEnumerable<SudokuTile> ruleTiles = from i in Enumerable.Range(0, joinedString.Length)
-                                where joinedString[i] == ch // filter out any non-matching characters
-                                select board[i % sizeX, i / sizeY];
+                                                    where joinedString[i] == ch // filter out any non-matching characters
+                                                    select board[i % sizeX, i / sizeY];
                 board.CreateRule($"Area {ch}", ruleTiles);
             }
 
