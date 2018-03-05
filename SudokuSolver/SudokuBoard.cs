@@ -88,6 +88,12 @@ namespace SudokuSolver
 
         public bool CheckValid() => rules.All(rule => rule.CheckValid());
 
+        public string[] TileDefinitions => tiles
+            .Cast<SudokuTile>()
+            .GroupBy(t => t.X)
+            .Select(g => string.Join(string.Empty, g.Select(t => t.Value)))
+            .ToArray();
+
         public IEnumerable<SudokuBoard> Solve()
         {
             // reset solution
