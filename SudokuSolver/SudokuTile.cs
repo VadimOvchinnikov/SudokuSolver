@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SudokuSolver
 {
-    public class SudokuTile
+    public class SudokuTile : IEquatable<SudokuTile>
     {
         internal static SudokuProgress CombineSolvedState(SudokuProgress a, SudokuProgress b)
         {
@@ -91,6 +91,25 @@ namespace SudokuSolver
         }
 
         public bool IsValuePossible(int i) => possibleValues.Contains(i);
+
+        public bool Equals(SudokuTile other)
+        {
+            if (other == null) return false;
+            return X == other.X
+                && Y == other.Y
+                && IsBlocked == other.IsBlocked
+                && Value == Value;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals(obj as SudokuTile);
+        }
+
+        public override int GetHashCode() => Tuple.Create(X, Y, IsBlocked, Value).GetHashCode();
 
         public int X => _x;
         public int Y => _y;

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SudokuSolver
 {
-    public class SudokuBoard
+    public class SudokuBoard : IEquatable<SudokuBoard>
     {
         public SudokuBoard(SudokuBoard copy)
         {
@@ -162,13 +162,13 @@ namespace SudokuSolver
             // Method for initializing a board from string
             for (int i = 0; i < s.Length; i++)
             {
-                var tile = tiles[i, _rowAddIndex];
+                SudokuTile tile = tiles[i, _rowAddIndex];
                 if (s[i] == '/')
                 {
                     tile.Block();
                     continue;
                 }
-                int value = s[i] == '.' ? 0 : (int)char.GetNumericValue(s[i]);
+                int value = s[i] == '.' ? SudokuTile.CLEARED : (int)char.GetNumericValue(s[i]);
                 tile.Value = value;
             }
             _rowAddIndex++;
@@ -212,6 +212,20 @@ namespace SudokuSolver
             {
                 Console.WriteLine($"{String.Join(",", rule)} - {rule}");
             }
+        }
+
+        public bool Equals(SudokuBoard other)
+        {
+            if (other == null) return false;
+            return tiles.Cast<SudokuTile>().SequenceEqual(other.tiles.Cast<SudokuTile>());
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals(obj as SudokuTile);
         }
     }
 }
