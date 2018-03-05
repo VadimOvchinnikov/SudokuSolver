@@ -8,13 +8,18 @@ namespace SudokuSolver
     {
         internal static SudokuProgress CombineSolvedState(SudokuProgress a, SudokuProgress b)
         {
-            if (a == SudokuProgress.FAILED)
-                return a;
-            if (a == SudokuProgress.NO_PROGRESS)
-                return b;
-            if (a == SudokuProgress.PROGRESS)
-                return b == SudokuProgress.FAILED ? b : a;
-            throw new InvalidOperationException("Invalid value for a");
+            switch (a)
+            {
+                case SudokuProgress.FAILED:
+                    return a;
+
+                case SudokuProgress.NO_PROGRESS:
+                    return b;
+
+                case SudokuProgress.PROGRESS:
+                    return b == SudokuProgress.FAILED ? b : a;
+            }
+            throw new InvalidOperationException($"Invalid value for {nameof(a)}");
         }
 
         public const int CLEARED = 0;
