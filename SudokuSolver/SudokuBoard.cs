@@ -74,8 +74,7 @@ namespace SudokuSolver
         }
 
         internal IEnumerable<SudokuTile> TileBox(int startX, int startY, int sizeX, int sizeY) =>
-            from pos in SudokuFactory.Box(sizeX, sizeY) select tiles[startX + pos.X, startY + pos.Y];
-
+            SudokuFactory.Box(sizeX, sizeY).Select(pos => tiles[startX + pos.X, startY + pos.Y]);
 
         public int Width => tiles.GetLength(0);
 
