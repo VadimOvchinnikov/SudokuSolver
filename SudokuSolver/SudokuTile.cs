@@ -6,6 +6,15 @@ namespace SudokuSolver
 {
     public class SudokuTile : IEquatable<SudokuTile>
     {
+        public const int CLEARED = 0;
+        private readonly int _maxValue;
+        private readonly int _x;
+        private readonly int _y;
+
+        private ISet<int> possibleValues = new HashSet<int>();
+        private int _value = 0;
+        private bool _blocked = false;
+
         internal static SudokuProgress CombineSolvedState(SudokuProgress a, SudokuProgress b)
         {
             switch (a)
@@ -22,22 +31,11 @@ namespace SudokuSolver
             throw new InvalidOperationException($"Invalid value for {nameof(a)}");
         }
 
-        public const int CLEARED = 0;
-        private int _maxValue;
-        private int _value;
-        private int _x;
-        private int _y;
-        private ISet<int> possibleValues;
-        private bool _blocked;
-
         public SudokuTile(int x, int y, int maxValue)
         {
             _x = x;
             _y = y;
-            _blocked = false;
             _maxValue = maxValue;
-            possibleValues = new HashSet<int>();
-            _value = 0;
         }
 
         public int Value

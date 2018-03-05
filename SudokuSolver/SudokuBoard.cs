@@ -6,6 +6,10 @@ namespace SudokuSolver
 {
     public class SudokuBoard : IEquatable<SudokuBoard>
     {
+        private readonly ISet<SudokuRule> rules = new HashSet<SudokuRule>();
+        private readonly SudokuTile[,] tiles;
+        private readonly int _maxValue;
+
         public SudokuBoard(SudokuBoard copy)
         {
             _maxValue = copy._maxValue;
@@ -45,8 +49,6 @@ namespace SudokuSolver
         {
         }
 
-        private int _maxValue;
-
         private void CreateTiles()
         {
             foreach (var pos in SudokuFactory.Box(tiles.GetLength(0), tiles.GetLength(1)))
@@ -73,8 +75,6 @@ namespace SudokuSolver
         internal IEnumerable<SudokuTile> TileBox(int startX, int startY, int sizeX, int sizeY) =>
             from pos in SudokuFactory.Box(sizeX, sizeY) select tiles[startX + pos.X, startY + pos.Y];
 
-        private ISet<SudokuRule> rules = new HashSet<SudokuRule>();
-        private SudokuTile[,] tiles;
 
         public int Width => tiles.GetLength(0);
 
