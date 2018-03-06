@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SudokuSolver
 {
-    public class SudokuBoard : IEquatable<SudokuBoard>
+    public class SudokuBoard
     {
         private readonly ISet<SudokuRule> rules = new HashSet<SudokuRule>();
         private readonly SudokuTile[,] tiles;
@@ -180,20 +180,6 @@ namespace SudokuSolver
                 IEnumerable<SudokuTile> boxTiles = TileBox(pos.X * sizeX, pos.Y * sizeY, sizeX, sizeY);
                 CreateRule($"Box at ({pos.X}, {pos.Y})", boxTiles);
             }
-        }
-
-        public bool Equals(SudokuBoard other)
-        {
-            if (other == null) return false;
-            return tiles.Cast<SudokuTile>().SequenceEqual(other.tiles.Cast<SudokuTile>());
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals(obj as SudokuTile);
         }
     }
 }
