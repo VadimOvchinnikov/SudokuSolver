@@ -77,17 +77,20 @@ namespace SudokuSolver
         {
             if (_blocked)
                 return SudokuProgress.NO_PROGRESS;
+
             // Takes the current possible values and removes the ones existing in `existingNumbers`
             _possibleValues = _possibleValues.Except(existingNumbers);
-            SudokuProgress result = SudokuProgress.NO_PROGRESS;
-            if (_possibleValues.Count() == 1)
+
+            switch (_possibleValues.Count())
             {
-                Fix(_possibleValues.First(), "Only one possibility");
-                result = SudokuProgress.PROGRESS;
+                case 0:
+                    return SudokuProgress.FAILED;
+                case 1:
+                    Fix(_possibleValues.First(), "Only one possibility");
+                    return SudokuProgress.PROGRESS;
+                default:
+                    return SudokuProgress.NO_PROGRESS;
             }
-            if (_possibleValues.Count() == 0)
-                return SudokuProgress.FAILED;
-            return result;
         }
 
         internal bool IsValuePossible(int i) => _possibleValues.Contains(i);
