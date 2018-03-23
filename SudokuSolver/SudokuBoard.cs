@@ -7,7 +7,7 @@ namespace SudokuSolver
 {
     public class SudokuBoard
     {
-        private readonly ISet<SudokuRule> rules = new HashSet<SudokuRule>();
+        private readonly List<SudokuRule> rules = new List<SudokuRule>();
         private readonly SudokuTile[,] tiles;
         private readonly int _maxValue;
 
@@ -26,15 +26,9 @@ namespace SudokuSolver
             }
 
             // Copy the rules
-            foreach (SudokuRule rule in copy.rules)
-            {
-                HashSet<SudokuTile> ruleTiles = new HashSet<SudokuTile>();
-                foreach (SudokuTile tile in rule)
-                {
-                    ruleTiles.Add(tiles[tile.X, tile.Y]);
-                }
-                rules.Add(new SudokuRule(ruleTiles, rule.Description));
-            }
+            rules = copy.rules
+                .Select(rule => new SudokuRule(rule.Select(tile => tiles[tile.X, tile.Y]), rule.Description))
+                .ToList();
         }
 
         public SudokuBoard(int width, int height, int maxValue, string[] tileDefinitions)
