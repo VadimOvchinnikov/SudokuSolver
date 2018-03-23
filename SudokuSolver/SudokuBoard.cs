@@ -7,34 +7,34 @@ namespace SudokuSolver
 {
     public class SudokuBoard
     {
-        private readonly List<SudokuRule> rules = new List<SudokuRule>();
-        private readonly SudokuTile[,] tiles;
+        private readonly List<SudokuRule> _rules = new List<SudokuRule>();
+        private readonly SudokuTile[,] _tiles;
         private readonly int _maxValue;
 
         public SudokuBoard(SudokuBoard copy)
         {
             _maxValue = copy._maxValue;
-            tiles = new SudokuTile[copy.Width, copy.Height];
+            _tiles = new SudokuTile[copy.Width, copy.Height];
             CreateTiles();
             // Copy the tile values
             foreach (Point pos in SudokuFactory.Box(Width, Height))
             {
-                tiles[pos.X, pos.Y] = new SudokuTile(pos.X, pos.Y, _maxValue)
+                _tiles[pos.X, pos.Y] = new SudokuTile(pos.X, pos.Y, _maxValue)
                 {
                     Value = copy[pos.X, pos.Y].Value
                 };
             }
 
             // Copy the rules
-            rules = copy.rules
-                .Select(rule => new SudokuRule(rule.Select(tile => tiles[tile.X, tile.Y]), rule.Description))
+            _rules = copy._rules
+                .Select(rule => new SudokuRule(rule.Select(tile => _tiles[tile.X, tile.Y]), rule.Description))
                 .ToList();
         }
 
         public SudokuBoard(int width, int height, int maxValue, string[] tileDefinitions)
         {
             _maxValue = maxValue;
-            tiles = new SudokuTile[width, height];
+            _tiles = new SudokuTile[width, height];
             CreateTiles();
             if (_maxValue == width || _maxValue == height) // If maxValue is not width or height, then adding line rules would be stupid
                 SetupLineRules();
@@ -48,9 +48,9 @@ namespace SudokuSolver
 
         private void CreateTiles()
         {
-            foreach (Point pos in SudokuFactory.Box(tiles.GetLength(0), tiles.GetLength(1)))
+            foreach (Point pos in SudokuFactory.Box(_tiles.GetLength(0), _tiles.GetLength(1)))
             {
-                tiles[pos.X, pos.Y] = new SudokuTile(pos.X, pos.Y, _maxValue);
+                _tiles[pos.X, pos.Y] = new SudokuTile(pos.X, pos.Y, _maxValue);
             }
         }
 
@@ -58,26 +58,26 @@ namespace SudokuSolver
         {
             // Create rules for rows and columns
             for (int x = 0; x < Width; x++)
-                rules.Add(new SudokuRule(Enumerable.Range(0, tiles.GetLength(1)).Select(i => tiles[x, i]), $"Row {x}"));
+                _rules.Add(new SudokuRule(Enumerable.Range(0, _tiles.GetLength(1)).Select(i => _tiles[x, i]), $"Row {x}"));
 
             for (int y = 0; y < Height; y++)
-                rules.Add(new SudokuRule(Enumerable.Range(0, tiles.GetLength(0)).Select(i => tiles[i, y]), $"Col {y}"));
+                _rules.Add(new SudokuRule(Enumerable.Range(0, _tiles.GetLength(0)).Select(i => _tiles[i, y]), $"Col {y}"));
         }
 
         internal IEnumerable<SudokuTile> TileBox(int startX, int startY, int sizeX, int sizeY) =>
-            SudokuFactory.Box(sizeX, sizeY).Select(pos => tiles[startX + pos.X, startY + pos.Y]);
+            SudokuFactory.Box(sizeX, sizeY).Select(pos => _tiles[startX + pos.X, startY + pos.Y]);
 
-        public SudokuTile this[int x, int y] => tiles[x, y];
+        public SudokuTile this[int x, int y] => _tiles[x, y];
 
-        public int Width => tiles.GetLength(0);
+        public int Width => _tiles.GetLength(0);
 
-        public int Height => tiles.GetLength(1);
+        public int Height => _tiles.GetLength(1);
 
-        internal void CreateRule(string description, IEnumerable<SudokuTile> tiles) => rules.Add(new SudokuRule(tiles, description));
+        internal void CreateRule(string description, IEnumerable<SudokuTile> tiles) => _rules.Add(new SudokuRule(tiles, description));
 
-        public bool CheckValid() => rules.All(rule => rule.CheckValid());
+        public bool CheckValid() => _rules.All(rule => rule.CheckValid());
 
-        public string[] TileDefinitions => tiles
+        public string[] TileDefinitions => _tiles
             .Cast<SudokuTile>()
             .OrderBy(t => t.X)
             .ThenBy(t => t.Y)
@@ -88,7 +88,7 @@ namespace SudokuSolver
         public IEnumerable<SudokuBoard> Solve()
         {
             // reset solution
-            foreach (SudokuTile tile in tiles)
+            foreach (SudokuTile tile in _tiles)
                 tile.ResetPossibles();
 
             SudokuProgress simplify = SudokuProgress.PROGRESS;
@@ -98,7 +98,7 @@ namespace SudokuSolver
                 yield break;
 
             // Find one of the values with the least number of alternatives, but that still has at least 2 alternatives
-            IEnumerable<SudokuTile> query = from rule in rules
+            IEnumerable<SudokuTile> query = from rule in _rules
                                             from tile in rule
                                             where tile.PossibleCount > 1
                                             orderby tile.PossibleCount ascending
@@ -134,7 +134,7 @@ namespace SudokuSolver
                 // Method for initializing a board from string
                 for (int i = 0; i < s.Length; i++)
                 {
-                    SudokuTile tile = tiles[i, rowIndex];
+                    SudokuTile tile = _tiles[i, rowIndex];
                     if (s[i] == '/')
                     {
                         tile.Block();
@@ -153,7 +153,7 @@ namespace SudokuSolver
             if (!valid)
                 return SudokuProgress.FAILED;
 
-            return rules.Aggregate(SudokuProgress.NO_PROGRESS,
+            return _rules.Aggregate(SudokuProgress.NO_PROGRESS,
                 (progress, rule) => SudokuTile.CombineSolvedState(progress, rule.Solve()));
         }
 
