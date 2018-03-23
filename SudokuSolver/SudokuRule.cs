@@ -6,12 +6,12 @@ namespace SudokuSolver
 {
     public class SudokuRule : IEnumerable<SudokuTile>
     {
-        private readonly ISet<SudokuTile> _tiles;
+        private readonly IEnumerable<SudokuTile> _tiles;
         private readonly string _description;
 
         internal SudokuRule(IEnumerable<SudokuTile> tiles, string description)
         {
-            _tiles = new HashSet<SudokuTile>(tiles);
+            _tiles = tiles.ToArray();
             _description = description;
         }
 
@@ -31,7 +31,7 @@ namespace SudokuSolver
             IEnumerable<SudokuTile> withoutNumber = _tiles.Where(tile => !tile.HasValue);
 
             // The existing numbers in this rule
-            IEnumerable<int> existingNumbers = new HashSet<int>(withNumber.Select(tile => tile.Value).Distinct().ToList());
+            IEnumerable<int> existingNumbers = withNumber.Select(tile => tile.Value).Distinct();
 
             return withoutNumber.Aggregate(
                 SudokuProgress.NO_PROGRESS,
@@ -41,10 +41,10 @@ namespace SudokuSolver
         internal SudokuProgress CheckForOnlyOnePossibility()
         {
             // Check if there is only one number within this rule that can have a specific value
-            IList<int> existingNumbers = _tiles.Select(tile => tile.Value).Distinct().ToList();
+            IEnumerable<int> existingNumbers = _tiles.Select(tile => tile.Value).Distinct();
             SudokuProgress result = SudokuProgress.NO_PROGRESS;
 
-            foreach (int value in Enumerable.Range(1, _tiles.Count))
+            foreach (int value in Enumerable.Range(1, _tiles.Count()))
             {
                 if (existingNumbers.Contains(value)) // this rule already has the value, skip checking for it
                     continue;
