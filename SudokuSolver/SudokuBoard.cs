@@ -58,15 +58,10 @@ namespace SudokuSolver
         {
             // Create rules for rows and columns
             for (int x = 0; x < Width; x++)
-            {
-                IEnumerable<SudokuTile> row = Enumerable.Range(0, tiles.GetLength(1)).Select(i => tiles[x, i]);
-                rules.Add(new SudokuRule(row, $"Row {x}"));
-            }
+                rules.Add(new SudokuRule(Enumerable.Range(0, tiles.GetLength(1)).Select(i => tiles[x, i]), $"Row {x}"));
+
             for (int y = 0; y < Height; y++)
-            {
-                IEnumerable<SudokuTile> col = Enumerable.Range(0, tiles.GetLength(0)).Select(i => tiles[i, y]);
-                rules.Add(new SudokuRule(col, $"Col {y}"));
-            }
+                rules.Add(new SudokuRule(Enumerable.Range(0, tiles.GetLength(0)).Select(i => tiles[i, y]), $"Col {y}"));
         }
 
         internal IEnumerable<SudokuTile> TileBox(int startX, int startY, int sizeX, int sizeY) =>
@@ -145,8 +140,7 @@ namespace SudokuSolver
                         tile.Block();
                         continue;
                     }
-                    int value = s[i] == '.' ? SudokuTile.CLEARED : (int)char.GetNumericValue(s[i]);
-                    tile.Value = value;
+                    tile.Value = s[i] == '.' ? SudokuTile.CLEARED : (int)char.GetNumericValue(s[i]);
                 }
 
                 rowIndex++;
@@ -170,10 +164,7 @@ namespace SudokuSolver
 
             IEnumerable<Point> boxes = SudokuFactory.Box(sizeX, sizeY);
             foreach (Point pos in boxes)
-            {
-                IEnumerable<SudokuTile> boxTiles = TileBox(pos.X * sizeX, pos.Y * sizeY, sizeX, sizeY);
-                CreateRule($"Box at ({pos.X}, {pos.Y})", boxTiles);
-            }
+                CreateRule($"Box at ({pos.X}, {pos.Y})", TileBox(pos.X * sizeX, pos.Y * sizeY, sizeX, sizeY));
         }
     }
 }
