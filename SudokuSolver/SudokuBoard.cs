@@ -37,9 +37,33 @@ namespace SudokuSolver
             _tiles = new SudokuTile[width, height];
             CreateTiles();
             if (_maxValue == width || _maxValue == height) // If maxValue is not width or height, then adding line rules would be stupid
-                SetupLineRules();
+            {
+                // Create rules for rows and columns
+                for (int x = 0; x < Width; x++)
+                    _rules.Add(new SudokuRule(Enumerable.Range(0, _tiles.GetLength(1)).Select(i => _tiles[x, i]), $"Row {x}"));
 
-            Populate(tileDefinitions);
+                for (int y = 0; y < Height; y++)
+                    _rules.Add(new SudokuRule(Enumerable.Range(0, _tiles.GetLength(0)).Select(i => _tiles[i, y]), $"Col {y}"));
+            }
+
+            int rowIndex = 0;
+
+            foreach (string s in tileDefinitions)
+            {
+                // Method for initializing a board from string
+                for (int i = 0; i < s.Length; i++)
+                {
+                    SudokuTile tile = _tiles[i, rowIndex];
+                    if (s[i] == '/')
+                    {
+                        tile.Block();
+                        continue;
+                    }
+                    tile.Value = s[i] == '.' ? SudokuTile.CLEARED : (int)char.GetNumericValue(s[i]);
+                }
+
+                rowIndex++;
+            }
         }
 
         public SudokuBoard(int width, int height, string[] tileDefinitions) : this(width, height, Math.Max(width, height), tileDefinitions)
@@ -54,19 +78,6 @@ namespace SudokuSolver
             }
         }
 
-        private void SetupLineRules()
-        {
-            // Create rules for rows and columns
-            for (int x = 0; x < Width; x++)
-                _rules.Add(new SudokuRule(Enumerable.Range(0, _tiles.GetLength(1)).Select(i => _tiles[x, i]), $"Row {x}"));
-
-            for (int y = 0; y < Height; y++)
-                _rules.Add(new SudokuRule(Enumerable.Range(0, _tiles.GetLength(0)).Select(i => _tiles[i, y]), $"Col {y}"));
-        }
-
-        internal IEnumerable<SudokuTile> TileBox(int startX, int startY, int sizeX, int sizeY) =>
-            SudokuFactory.Box(sizeX, sizeY).Select(pos => _tiles[startX + pos.X, startY + pos.Y]);
-
         public SudokuTile this[int x, int y] => _tiles[x, y];
 
         public int Width => _tiles.GetLength(0);
@@ -74,8 +85,6 @@ namespace SudokuSolver
         public int Height => _tiles.GetLength(1);
 
         internal void CreateRule(string description, IEnumerable<SudokuTile> tiles) => _rules.Add(new SudokuRule(tiles, description));
-
-        public bool CheckValid() => _rules.All(rule => rule.CheckValid());
 
         public string[] TileDefinitions => _tiles
             .Cast<SudokuTile>()
@@ -87,6 +96,16 @@ namespace SudokuSolver
 
         public IEnumerable<SudokuBoard> Solve()
         {
+            SudokuProgress Simplify()
+            {
+                bool valid = _rules.All(rule => rule.CheckValid());
+                if (!valid)
+                    return SudokuProgress.FAILED;
+
+                return _rules.Aggregate(SudokuProgress.NO_PROGRESS,
+                    (progress, rule) => SudokuTile.CombineSolvedState(progress, rule.Solve()));
+            }
+
             // reset solution
             foreach (SudokuTile tile in _tiles)
                 tile.ResetPossibles();
@@ -125,46 +144,17 @@ namespace SudokuSolver
             yield break;
         }
 
-        private void Populate(string[] tileDefinitions)
-        {
-            int rowIndex = 0;
-
-            foreach (string s in tileDefinitions)
-            {
-                // Method for initializing a board from string
-                for (int i = 0; i < s.Length; i++)
-                {
-                    SudokuTile tile = _tiles[i, rowIndex];
-                    if (s[i] == '/')
-                    {
-                        tile.Block();
-                        continue;
-                    }
-                    tile.Value = s[i] == '.' ? SudokuTile.CLEARED : (int)char.GetNumericValue(s[i]);
-                }
-
-                rowIndex++;
-            }
-        }
-
-        internal SudokuProgress Simplify()
-        {
-            bool valid = CheckValid();
-            if (!valid)
-                return SudokuProgress.FAILED;
-
-            return _rules.Aggregate(SudokuProgress.NO_PROGRESS,
-                (progress, rule) => SudokuTile.CombineSolvedState(progress, rule.Solve()));
-        }
-
         internal void AddBoxesCount(int boxesX, int boxesY)
         {
             int sizeX = Width / boxesX;
             int sizeY = Height / boxesY;
 
+            IEnumerable<SudokuTile> TileBox(int startX, int startY) =>
+                SudokuFactory.Box(sizeX, sizeY).Select(pos => _tiles[startX + pos.X, startY + pos.Y]);
+
             IEnumerable<Point> boxes = SudokuFactory.Box(sizeX, sizeY);
             foreach (Point pos in boxes)
-                CreateRule($"Box at ({pos.X}, {pos.Y})", TileBox(pos.X * sizeX, pos.Y * sizeY, sizeX, sizeY));
+                CreateRule($"Box at ({pos.X}, {pos.Y})", TileBox(pos.X * sizeX, pos.Y * sizeY));
         }
     }
 }
