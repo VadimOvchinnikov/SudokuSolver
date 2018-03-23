@@ -11,7 +11,7 @@ namespace SudokuSolver
         private const int BoxSize = 3;
         private const int HyperMargin = 1;
 
-        public static IEnumerable<Point> Box(int sizeX, int sizeY)
+        internal static IEnumerable<Point> Box(int sizeX, int sizeY)
         {
             return
                 from x in Enumerable.Range(0, sizeX)

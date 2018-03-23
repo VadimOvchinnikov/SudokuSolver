@@ -11,7 +11,7 @@ namespace SudokuSolver
         private readonly SudokuTile[,] _tiles;
         private readonly int _maxValue;
 
-        public SudokuBoard(SudokuBoard copy)
+        internal SudokuBoard(SudokuBoard copy)
         {
             _maxValue = copy._maxValue;
             _tiles = new SudokuTile[copy.Width, copy.Height];
@@ -31,7 +31,7 @@ namespace SudokuSolver
                 .ToList();
         }
 
-        public SudokuBoard(int width, int height, int maxValue, string[] tileDefinitions)
+        internal SudokuBoard(int width, int height, int maxValue, string[] tileDefinitions)
         {
             _maxValue = maxValue;
             _tiles = new SudokuTile[width, height];
@@ -66,7 +66,7 @@ namespace SudokuSolver
             }
         }
 
-        public SudokuBoard(int width, int height, string[] tileDefinitions) : this(width, height, Math.Max(width, height), tileDefinitions)
+        internal SudokuBoard(int width, int height, string[] tileDefinitions) : this(width, height, Math.Max(width, height), tileDefinitions)
         {
         }
 

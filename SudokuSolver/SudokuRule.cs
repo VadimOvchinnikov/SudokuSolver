@@ -15,7 +15,7 @@ namespace SudokuSolver
             _description = description;
         }
 
-        public bool CheckValid()
+        internal bool CheckValid()
         {
             IEnumerable<SudokuTile> filtered = _tiles.Where(tile => tile.HasValue);
             IEnumerable<IGrouping<int, SudokuTile>> groupedByValue = filtered.GroupBy(tile => tile.Value);
