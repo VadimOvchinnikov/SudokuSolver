@@ -78,7 +78,7 @@ namespace SudokuSolver
             if (_blocked)
                 return SudokuProgress.NO_PROGRESS;
             // Takes the current possible values and removes the ones existing in `existingNumbers`
-            _possibleValues = _possibleValues.Where(x => !existingNumbers.Contains(x));
+            _possibleValues = _possibleValues.Except(existingNumbers);
             SudokuProgress result = SudokuProgress.NO_PROGRESS;
             if (_possibleValues.Count() == 1)
             {
