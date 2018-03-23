@@ -88,11 +88,10 @@ namespace SudokuSolver
             int sizeX = areas[0].Length;
             int sizeY = areas.Length;
             SudokuBoard board = new SudokuBoard(sizeX, sizeY, tileDefinitions);
-            string joinedString = string.Join("", areas);
-            IEnumerable<char> grouped = joinedString.Distinct();
+            string joinedString = string.Join(string.Empty, areas);
 
             // Loop through all the unique characters
-            foreach (char ch in grouped)
+            foreach (char ch in joinedString.Distinct())
             {
                 // Select the rule tiles based on the index of the character
                 IEnumerable<SudokuTile> ruleTiles = from i in Enumerable.Range(0, joinedString.Length)
