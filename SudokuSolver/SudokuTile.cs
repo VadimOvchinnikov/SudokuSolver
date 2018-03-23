@@ -11,7 +11,7 @@ namespace SudokuSolver
         private readonly int _x;
         private readonly int _y;
 
-        private ISet<int> possibleValues = new HashSet<int>();
+        private IEnumerable<int> _possibleValues = Enumerable.Empty<int>();
         private int _value = 0;
         private bool _blocked = false;
 
@@ -59,12 +59,10 @@ namespace SudokuSolver
 
         internal void ResetPossibles()
         {
-            possibleValues.Clear();
-            foreach (int i in Enumerable.Range(1, _maxValue))
-            {
-                if (!HasValue || Value == i)
-                    possibleValues.Add(i);
-            }
+            if (HasValue)
+                _possibleValues = Enumerable.Repeat(Value, 1);
+            else
+                _possibleValues = Enumerable.Range(1, _maxValue);
         }
 
         internal void Block() => _blocked = true;
@@ -80,24 +78,24 @@ namespace SudokuSolver
             if (_blocked)
                 return SudokuProgress.NO_PROGRESS;
             // Takes the current possible values and removes the ones existing in `existingNumbers`
-            possibleValues = new HashSet<int>(possibleValues.Where(x => !existingNumbers.Contains(x)));
+            _possibleValues = _possibleValues.Where(x => !existingNumbers.Contains(x));
             SudokuProgress result = SudokuProgress.NO_PROGRESS;
-            if (possibleValues.Count == 1)
+            if (_possibleValues.Count() == 1)
             {
-                Fix(possibleValues.First(), "Only one possibility");
+                Fix(_possibleValues.First(), "Only one possibility");
                 result = SudokuProgress.PROGRESS;
             }
-            if (possibleValues.Count == 0)
+            if (_possibleValues.Count() == 0)
                 return SudokuProgress.FAILED;
             return result;
         }
 
-        internal bool IsValuePossible(int i) => possibleValues.Contains(i);
+        internal bool IsValuePossible(int i) => _possibleValues.Contains(i);
 
         public int X => _x;
         public int Y => _y;
         public bool IsBlocked => _blocked;  // A blocked field can not contain a value — used for creating 'holes' in the map
 
-        internal int PossibleCount => IsBlocked ? 1 : possibleValues.Count;
+        internal int PossibleCount => IsBlocked ? 1 : _possibleValues.Count();
     }
 }
