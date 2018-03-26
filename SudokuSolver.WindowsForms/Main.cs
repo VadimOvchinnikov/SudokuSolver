@@ -38,7 +38,8 @@ namespace SudokuSolver.WindowsForms
 
             SudokuBoard board = SudokuFactory.ClassicWith3x3Boxes(tileDefinitions);
 
-            IEnumerable<SudokuBoard> solutions = board.Solve();
+            // taking only 2 solutions for optimization
+            IEnumerable<SudokuBoard> solutions = board.Solve().Take(2);
 
             if (!solutions.Any())
             {
