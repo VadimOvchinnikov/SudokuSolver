@@ -31,7 +31,7 @@ namespace SudokuSolver
             IEnumerable<SudokuTile> withoutNumber = _tiles.Where(tile => !tile.HasValue);
 
             // The existing numbers in this rule
-            IEnumerable<int> existingNumbers = withNumber.Select(tile => tile.Value).Distinct();
+            IEnumerable<int> existingNumbers = withNumber.Select(tile => tile.Value);
 
             return withoutNumber.Aggregate(
                 SudokuProgress.NO_PROGRESS,
@@ -41,7 +41,7 @@ namespace SudokuSolver
         internal SudokuProgress CheckForOnlyOnePossibility()
         {
             // Check if there is only one number within this rule that can have a specific value
-            IEnumerable<int> existingNumbers = _tiles.Select(tile => tile.Value).Distinct();
+            IEnumerable<int> existingNumbers = _tiles.Select(tile => tile.Value);
             SudokuProgress result = SudokuProgress.NO_PROGRESS;
 
             foreach (int value in Enumerable.Range(1, _tiles.Count()))
