@@ -46,28 +46,30 @@ namespace SudokuSolver
                     _rules.Add(new SudokuRule(Enumerable.Range(0, _tiles.GetLength(0)).Select(i => _tiles[i, y]), $"Col {y}"));
             }
 
-            int rowIndex = 0;
-
-            foreach (string s in tileDefinitions)
-            {
-                // Method for initializing a board from string
-                for (int i = 0; i < s.Length; i++)
-                {
-                    SudokuTile tile = _tiles[i, rowIndex];
-                    if (s[i] == '/')
-                    {
-                        tile.Block();
-                        continue;
-                    }
-                    tile.Value = s[i] == '.' ? SudokuTile.CLEARED : (int)char.GetNumericValue(s[i]);
-                }
-
-                rowIndex++;
-            }
+            PopulateTiles(tileDefinitions);
         }
 
         internal SudokuBoard(int width, int height, string[] tileDefinitions) : this(width, height, Math.Max(width, height), tileDefinitions)
         {
+        }
+
+        private void PopulateTiles(string[] tileDefinitions)
+        {
+            for (int row = 0; row < tileDefinitions.Length; row++)
+            {
+                string tileDefinition = tileDefinitions[row];
+
+                for (int column = 0; column < tileDefinition.Length; column++)
+                {
+                    SudokuTile tile = _tiles[column, row];
+                    if (tileDefinition[column] == '/')
+                    {
+                        tile.Block();
+                        continue;
+                    }
+                    tile.Value = tileDefinition[column] == '.' ? SudokuTile.CLEARED : (int)char.GetNumericValue(tileDefinition[column]);
+                }
+            }
         }
 
         private void CreateTiles()
